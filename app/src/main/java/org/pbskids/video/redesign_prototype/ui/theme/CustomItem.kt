@@ -28,8 +28,9 @@ fun CustomItem(singleBox: SingleBox){
             .padding(horizontal = 16.dp)
             .background(Color.DarkGray),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(80.dp)
-    ){
+        verticalArrangement = Arrangement.spacedBy(80.dp),
+    ){//make image bigger when selected
+
         Image(painter = painterResource(id = singleBox.imageID), modifier = Modifier.height(200.dp).width(300.dp).padding(32.dp), contentDescription = null, contentScale = ContentScale.Crop)
     }
 }

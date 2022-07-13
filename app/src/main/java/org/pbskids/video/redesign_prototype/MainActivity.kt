@@ -3,6 +3,7 @@ package org.pbskids.video.redesign_prototype
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,12 +13,16 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import org.pbskids.video.redesign_prototype.model.SingleBox
 import org.pbskids.video.redesign_prototype.repository.SingleBoxRepository
 import org.pbskids.video.redesign_prototype.ui.theme.CustomItem
 import org.pbskids.video.redesign_prototype.ui.theme.RedesignPrototypeTheme
+
 
 class MainActivity : ComponentActivity() {
 
@@ -34,6 +39,8 @@ class MainActivity : ComponentActivity() {
 }
 
 
+
+@OptIn(ExperimentalSnapperApi::class)
 @Composable
 fun CircularList(
     data: List<SingleBox>,
@@ -46,14 +53,19 @@ fun CircularList(
 
     LazyRow(
         state = listState,
-        modifier = modifier
+        modifier = modifier,
+        flingBehavior = rememberSnapperFlingBehavior(listState),
     ) {
         items(
             count = if (isEndless) Int.MAX_VALUE else data.size,
             itemContent = {
                 val index = it % data.size
                 CustomItem(data[index])    // item composable
-            }
+
+            },
+
+
+
         )
     }
 }
