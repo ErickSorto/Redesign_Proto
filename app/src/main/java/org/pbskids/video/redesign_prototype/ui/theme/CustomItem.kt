@@ -1,5 +1,7 @@
 package org.pbskids.video.redesign_prototype.ui.theme
 
+import android.util.Size
+import androidx.annotation.Dimension
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +22,7 @@ fun CustomItem(singleBox: SingleBox){
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+    val itemWidth = 300.dp
 
     Column(
         modifier = Modifier
@@ -29,7 +32,7 @@ fun CustomItem(singleBox: SingleBox){
             .background(Color.DarkGray),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(80.dp),
-    ){//make image bigger when selected
+    ){
 
         Image(painter = painterResource(id = singleBox.imageID), modifier = Modifier.height(200.dp).width(300.dp).padding(32.dp), contentDescription = null, contentScale = ContentScale.Crop)
     }
