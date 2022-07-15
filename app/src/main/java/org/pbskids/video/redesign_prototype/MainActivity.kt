@@ -7,7 +7,10 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,7 +59,6 @@ fun CircularList(
     )
 
     val configuration = LocalConfiguration.current
-
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
     val contentPadding = PaddingValues()
@@ -76,7 +78,8 @@ fun CircularList(
             }
         }
     }
-    BoxWithConstraints(Modifier.fillMaxWidth()) {
+
+    BoxWithConstraints {
         LazyRow(
             state = listState,
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -104,13 +107,12 @@ fun CircularList(
                     ) {
                         CustomItem(data[index], itemHeight)
                     }
-
                 }
-            )
+                )
         }
+
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -120,15 +122,5 @@ fun DefaultPreview() {
         val data = singleBoxRepository.getAllData()
         CircularList(data = data)
     }
-}
-
-
-@ExperimentalAnimationApi
-fun addAnimation(duration: Int = 800): ContentTransform {
-    return slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height } + fadeIn(
-        animationSpec = tween(durationMillis = duration)
-    ) with slideOutVertically(animationSpec = tween(durationMillis = duration)) { height -> -height } + fadeOut(
-        animationSpec = tween(durationMillis = duration)
-    )
 }
 
