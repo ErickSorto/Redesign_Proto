@@ -1,7 +1,6 @@
 package org.pbskids.video.redesign_prototype
 
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
@@ -9,18 +8,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
@@ -30,7 +27,6 @@ import org.pbskids.video.redesign_prototype.model.SingleBox
 import org.pbskids.video.redesign_prototype.repository.SingleBoxRepository
 import org.pbskids.video.redesign_prototype.ui.theme.CustomItem
 import org.pbskids.video.redesign_prototype.ui.theme.RedesignPrototypeTheme
-import org.w3c.dom.Text
 
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +58,7 @@ fun CircularList(
     val configuration = LocalConfiguration.current
 
     val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
     val contentPadding = PaddingValues()
 
     val midIndex by remember(listState.firstVisibleItemIndex) {
@@ -69,21 +66,27 @@ fun CircularList(
             listState.layoutInfo.visibleItemsInfo.run {
                 val firstVisibleIndex = listState.firstVisibleItemIndex
                 if (isEmpty()) -1
-                else if(isEndless){
-                    firstVisibleIndex % data.size + 1
-                }
-                else firstVisibleIndex
+                else if (isEndless) {
+                    if (firstVisibleIndex % data.size + 1 == data.size) {
+                        0
+                    } else {
+                        firstVisibleIndex % data.size + 1
+                    }
+                } else firstVisibleIndex
             }
         }
     }
-    BoxWithConstraints {
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
         LazyRow(
             state = listState,
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 16.dp),
             contentPadding = contentPadding,
-            flingBehavior = rememberSnapperFlingBehavior(listState, SnapOffsets.Center, snapIndex = { _, startIndex, targetIndex ->
-                targetIndex.coerceIn(startIndex - 7, startIndex + 7)
-            })
+            flingBehavior = rememberSnapperFlingBehavior(
+                listState,
+                SnapOffsets.Center,
+                snapIndex = { _, startIndex, targetIndex ->
+                    targetIndex.coerceIn(startIndex - 7, startIndex + 7)
+                })
 
         )
         {
@@ -91,33 +94,21 @@ fun CircularList(
                 count = if (isEndless) Int.MAX_VALUE else data.size,
                 itemContent = {
                     val index = it % data.size
-                    val padding = if (index == midIndex) 13.dp else 1.dp
+                    val padding = if (index == midIndex) 24.dp else 40.dp
+                    val itemHeight =
+                        if (index == midIndex) screenHeight / 8 * 6 else screenHeight / 8 * 5
                     Box(
                         Modifier
-                            .background(Color.Gray, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp, vertical = padding)
-                    ){
-                        CustomItem(data[index])
+                            .background(Color.Transparent, RoundedCornerShape(8.dp))
+                            .padding(top = padding, bottom = 32.dp)
+                    ) {
+                        CustomItem(data[index], itemHeight)
                     }
-                    Text(
-                        text = index.toString(),
-                        textAlign = TextAlign.End,
-                        style = MaterialTheme.typography.subtitle1
-                    )
 
                 }
             )
-
-
         }
-
     }
-    Text(
-        text = listState.firstVisibleItemIndex.toString(),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.subtitle1
-    )
-
 }
 
 
@@ -130,7 +121,6 @@ fun DefaultPreview() {
         CircularList(data = data)
     }
 }
-
 
 
 @ExperimentalAnimationApi

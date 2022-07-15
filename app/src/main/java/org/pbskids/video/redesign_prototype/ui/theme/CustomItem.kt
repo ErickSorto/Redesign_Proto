@@ -11,12 +11,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.pbskids.video.redesign_prototype.model.SingleBox
 
 
 @Composable
-fun CustomItem(singleBox: SingleBox) {
+fun CustomItem(singleBox: SingleBox, height: Dp) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
@@ -28,7 +29,7 @@ fun CustomItem(singleBox: SingleBox) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp)
             .background(Color.DarkGray),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(80.dp),
@@ -40,10 +41,10 @@ fun CustomItem(singleBox: SingleBox) {
                 .height(
                     when (configuration.orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
-                            itemHeightHorizontal
+                            height
                         }
                         else -> {
-                            itemHeightVertical
+                            height
                         }
                     }
                 )
