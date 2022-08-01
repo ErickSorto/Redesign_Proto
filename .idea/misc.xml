@@ -3,6 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/drawable/ic_baseline_keyboard_arrow_left_24.xml" value="0.143" />
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/drawable/ic_baseline_keyboard_arrow_right_24.xml" value="0.155" />
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/font/font.xml" value="0.24322916666666666" />
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/layout/activity_main.xml" value="0.20306513409961685" />
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/layout/fragment_carousel.xml" value="0.1" />
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/layout/fragment_grid.xml" value="0.28125" />
+        <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/layout/layout.xml" value="0.24270833333333333" />
         <entry key="..\:/Users/Ninja/AndroidStudioProjects/RedesignPrototype/app/src/main/res/xml/strings.xml" value="0.30085470085470084" />
       </map>
     </option>

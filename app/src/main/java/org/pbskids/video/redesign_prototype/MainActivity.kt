@@ -1,126 +1,106 @@
 package org.pbskids.video.redesign_prototype
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.animateContentSize
+import androidx.compose.compiler.plugins.kotlin.lower.ParamState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import androidx.window.layout.WindowMetricsCalculator
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.launch
 import org.pbskids.video.redesign_prototype.model.SingleBox
 import org.pbskids.video.redesign_prototype.repository.SingleBoxRepository
-import org.pbskids.video.redesign_prototype.ui.theme.CustomItem
-import org.pbskids.video.redesign_prototype.ui.theme.RedesignPrototypeTheme
+import org.pbskids.video.redesign_prototype.ui.theme.*
+import kotlin.math.roundToInt
 
 
-class MainActivity : ComponentActivity() {
-
+class MainActivity : AppCompatActivity() {
+    var widthWindowSizeClass: WindowSizeClass = WindowSizeClass.MEDIUM
+    var heightWindowSizeClass: WindowSizeClass = WindowSizeClass.MEDIUM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            RedesignPrototypeTheme {
-                val singleBoxRepository = SingleBoxRepository()
-                val data = singleBoxRepository.getAllData()
-                CircularList(data = data)
+        setContentView(R.layout.activity_main)
+        computeWindowSizeClasses()
 
+        val container: ViewGroup = findViewById(R.id.container)
+        // Add a utility view to the container to hook into
+        // View.onConfigurationChanged. This is required for all
+        // activities, even those that don't handle configuration
+        // changes. We also can't use Activity.onConfigurationChanged,
+        // since there are situations where that won't be called when
+        // the configuration changes. View.onConfigurationChanged is
+        // called in those scenarios.
+        container.addView(object : View(this) {
+            override fun onConfigurationChanged(newConfig: Configuration?) {
+                super.onConfigurationChanged(newConfig)
+                computeWindowSizeClasses()
             }
+        })
+
+        supportFragmentManager.beginTransaction().replace(R.id.module_1, HomeFragment.newInstance(widthWindowSizeClass, heightWindowSizeClass)).commit()
+
+//        setContent {
+//
+//            RedesignPrototypeTheme {
+//               HomeScreen(widthWindowSizeClass, heightWindowSizeClass)
+//            }
+//        }
+    }
+    enum class WindowSizeClass { COMPACT, MEDIUM, EXPANDED }
+
+    private fun computeWindowSizeClasses() {
+
+        val metrics  = WindowMetricsCalculator.getOrCreate()
+            .computeCurrentWindowMetrics(this)
+
+        val widthDp = metrics.bounds.width() /
+                resources.displayMetrics.density
+        widthWindowSizeClass = when {
+            widthDp < 600f -> WindowSizeClass.COMPACT
+            widthDp < 840f -> WindowSizeClass.MEDIUM
+            else -> WindowSizeClass.EXPANDED
         }
+
+        val heightDp = metrics.bounds.height() /
+                resources.displayMetrics.density
+        heightWindowSizeClass = when {
+            heightDp < 480f -> WindowSizeClass.COMPACT
+            heightDp < 900f -> WindowSizeClass.MEDIUM
+            else -> WindowSizeClass.EXPANDED
+        }
+
+        // Use widthWindowSizeClass and heightWindowSizeClass.
     }
 }
 
-@OptIn(ExperimentalSnapperApi::class, ExperimentalFoundationApi::class)
-@Composable
-fun CircularList(
-    data: List<SingleBox>,
-    modifier: Modifier = Modifier,
-    isEndless: Boolean = true,
-) {
-    val listState = rememberLazyListState(
-        if (isEndless) Int.MAX_VALUE / 2 else 0
-    )
 
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
-    val contentPadding = PaddingValues()
 
-    val midIndex by remember(listState.firstVisibleItemIndex) {
-        derivedStateOf {
-            listState.layoutInfo.visibleItemsInfo.run {
-                val firstVisibleIndex = listState.firstVisibleItemIndex
-                if (isEmpty()) -1
-                else if (isEndless) {
-                    if (firstVisibleIndex % data.size + 1 == data.size) {
-                        0
-                    } else {
-                        firstVisibleIndex % data.size + 1
-                    }
-                } else firstVisibleIndex
-            }
-        }
-    }
-
-    BoxWithConstraints {
-        LazyRow(
-            state = listState,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            contentPadding = contentPadding,
-            flingBehavior = rememberSnapperFlingBehavior(
-                listState,
-                SnapOffsets.Center,
-                snapIndex = { _, startIndex, targetIndex ->
-                    targetIndex.coerceIn(startIndex - 7, startIndex + 7)
-                })
-
-        )
-        {
-            items(
-                count = if (isEndless) Int.MAX_VALUE else data.size,
-                itemContent = {
-                    val index = it % data.size
-                    val padding = if (index == midIndex) 24.dp else 40.dp
-                    val itemHeight =
-                        if (index == midIndex) screenHeight / 8 * 6 else screenHeight / 8 * 5
-                    Box(
-                        Modifier
-                            .background(Color.Transparent, RoundedCornerShape(8.dp))
-                            .padding(top = padding, bottom = 32.dp)
-                    ) {
-                        CustomItem(data[index], itemHeight)
-                    }
-                }
-                )
-        }
-
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    RedesignPrototypeTheme {
-        val singleBoxRepository = SingleBoxRepository()
-        val data = singleBoxRepository.getAllData()
-        CircularList(data = data)
-    }
-}
 
