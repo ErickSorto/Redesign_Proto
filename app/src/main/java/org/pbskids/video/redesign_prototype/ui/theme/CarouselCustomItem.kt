@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,7 +34,7 @@ fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boole
 
 
     ConstraintLayout() {
-        val (layoutItem, item, logo) = createRefs()
+        val (layoutItem, item, logo, itemTitle) = createRefs()
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
@@ -49,7 +51,17 @@ fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boole
             val painter2 = rememberAsyncImagePainter(model = R.drawable.pbs_rebrand)
             val painter = rememberAsyncImagePainter(model = singleBox.imageID)
             val painterState = painter.state
+            val painterState2 = painter2.state
+            Column(
+                modifier = Modifier.clip(
+                    RoundedCornerShape(
+                        bottomEndPercent = 25,
+                        bottomStartPercent = 25
+                    ),
+                )
+            ) {
 
+            }
             Image(
                 painter = painter,
                 modifier = Modifier
@@ -59,7 +71,7 @@ fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boole
                     .fillMaxHeight()
                     .clip(
                         if (isMiddleIndex) {
-                            RoundedCornerShape(20.dp)
+                            RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                         } else {
                             RoundedCornerShape(0.dp)
                         }
@@ -69,24 +81,33 @@ fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boole
                 contentDescription = null,
 
                 )
+
+
+
             if (painterState is AsyncImagePainter.State.Loading) {
-                CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+
             }
 
-            Image(
-                painter = painter2,
-                modifier = Modifier
-                    .constrainAs(logo) {
-                        top.linkTo(item.top)
-                        end.linkTo(item.end)
-                    }
-                    .width(screenWidth / 8)
-                    .height(screenWidth / 8)
-                    .padding(8.dp),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
 
+            if (isMiddleIndex) {
+                Image(
+                    painter = painter2,
+                    modifier = Modifier
+                        .constrainAs(logo) {
+                            top.linkTo(item.top)
+                            end.linkTo(item.end)
+                        }
+                        .width(screenWidth / 8)
+                        .height(screenWidth / 8)
+                        .padding(8.dp),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
                 )
+            }
+
         }
 
     }

@@ -5,4 +5,6 @@ data class SingleBox (
     val name: String,
     val description: String,
     val imageID: Int,
+    val isNew: Boolean,
+    val isFullEpisode: Boolean
         )

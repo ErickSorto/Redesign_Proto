@@ -34,7 +34,7 @@ fun ItemColumn(data: List<SingleBox>, windowSizeWidth: MainActivity.WindowSizeCl
             FlowColumn(modifier = Modifier) {
                 Box(modifier = Modifier.fillMaxWidth())
                 {
-                    ColumnCustomItem(singleBox = data[dataIndex], itemWidth = screenWidth, windowSizeWidth, windowSizeHeight)
+                    ColumnCustomItem(singleBox = data[dataIndex], itemWidth = screenWidth/32 * 30, windowSizeWidth, windowSizeHeight)
                 }
             }
 

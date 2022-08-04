@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,12 +28,16 @@ fun GridLayout(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val Magenta = Color(0xFF9C27B0)
+    val compactWidth = windowSizeWidth == MainActivity.WindowSizeClass.COMPACT
+    val mediumWidth = windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM
+    val expandedWidth = windowSizeWidth == MainActivity.WindowSizeClass.EXPANDED
+    val compactHeight = windowSizeHeight == MainActivity.WindowSizeClass.COMPACT
 
     ConstraintLayout() {
         val (gridFrame, item) = createRefs()
         ConstraintLayout(modifier = Modifier
             .constrainAs(gridFrame) {
-                if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM ) {
+                if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM || windowSizeHeight == MainActivity.WindowSizeClass.COMPACT) {
                     height = Dimension.ratio("16:11")
                 } else {
                     height = Dimension.ratio("16:7")
@@ -42,22 +47,23 @@ fun GridLayout(
             .fillMaxWidth()
             .height(100.dp)
             .background(Magenta)) {
-            LazyHorizontalGrid(
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp),
-                rows = GridCells.Fixed(2),
+            LazyVerticalGrid(
+                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 32.dp),
+                columns = GridCells.Fixed(if (compactWidth || mediumWidth || compactHeight){2} else {4}),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 content = {
-
                     items(data.size) { index ->
                         Box(modifier = Modifier
                             .constrainAs(item) {}) {
                             ColumnCustomItem(
                                 data[index],
-                                if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM
+                                //ItemWidth.Dp
+                                if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM ||
+                                    windowSizeHeight == MainActivity.WindowSizeClass.COMPACT
                                 ) {
                                     screenWidth / 64 * 30
                                 } else {
-                                    screenWidth / 32 * 10
+                                    screenWidth / 64 * 18
                                 },
                                 windowSizeWidth,
                                 windowSizeHeight
@@ -65,7 +71,6 @@ fun GridLayout(
                         }
                     }
                 })
-            Text(text = "Hello")
         }
     }
 

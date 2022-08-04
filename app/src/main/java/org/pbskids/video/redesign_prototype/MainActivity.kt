@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         computeWindowSizeClasses()
-
+        actionBar?.setDisplayHomeAsUpEnabled(false)
         val container: ViewGroup = findViewById(R.id.container)
         // Add a utility view to the container to hook into
         // View.onConfigurationChanged. This is required for all

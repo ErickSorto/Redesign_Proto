@@ -25,7 +25,7 @@ fun HomeScreen(windowSizeWidth: MainActivity.WindowSizeClass, windowSizeHeight: 
     val screenHeight = configuration.screenHeightDp.dp
 
     Column(modifier = Modifier.verticalScroll(state)) {
-        CarouselList(data = data, windowSizeWidth)
+        CarouselList(data = data, windowSizeWidth, windowSizeHeight)
         if(compact){
             Box(modifier = Modifier.height(screenHeight)){
                 FlowColumn() {
