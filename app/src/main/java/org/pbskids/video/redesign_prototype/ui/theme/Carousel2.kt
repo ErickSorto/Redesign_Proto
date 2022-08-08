@@ -128,7 +128,7 @@ fun CarouselList2(
 
 
             ) {
-                CarouselCustomItem(data[index], 100.dp, true)
+               // CarouselCustomItem(data[index], 100.dp, true, windowSizeWidth = screenWidthPixels)
             }
         }
     }

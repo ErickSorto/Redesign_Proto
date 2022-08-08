@@ -1,5 +1,6 @@
 package org.pbskids.video.redesign_prototype.ui.theme
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -91,7 +92,8 @@ fun newEpisodeTag(
             .width(newTagSize)
             .height(newTagSize)
             .clip(CircleShape)
-            .background(yellow),
+            .background(yellow)
+            .animateContentSize { initialValue, targetValue ->  },
             contentAlignment = Alignment.Center) {
             Text(text = "NEW",
                 modifier = Modifier

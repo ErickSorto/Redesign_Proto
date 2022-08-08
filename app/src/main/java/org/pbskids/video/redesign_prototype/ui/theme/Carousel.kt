@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.SnapOffsets
@@ -51,6 +52,7 @@ fun CarouselList(
     windowSizeHeight: MainActivity.WindowSizeClass,
     isEndless: Boolean = true,
 ) {
+
     val compactWidth = windowSizeWidth == MainActivity.WindowSizeClass.COMPACT
     val mediumWidth = windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM
     val expandedWidth = windowSizeWidth == MainActivity.WindowSizeClass.EXPANDED
@@ -78,6 +80,12 @@ fun CarouselList(
 
     var size by remember { mutableStateOf(Size.Zero) }
 
+    val itemWidth = if(compactWidth) {
+        screenWidth / 8 * 6
+    }else{
+        screenWidth / 8 * 4
+    }
+
     val midIndex by remember(listState.firstVisibleItemIndex) {
         derivedStateOf {
             listState.layoutInfo.visibleItemsInfo.run {
@@ -100,14 +108,16 @@ fun CarouselList(
             modifier = Modifier
                 .background(lightBlue)
                 .constrainAs(carouselLayout) {
-                    height = Dimension.ratio(if(compactWidth) {
-                        "16:9"
-                    } else {
-                        "16:7"
-                    })
+                    height = Dimension.ratio(
+                        if (compactWidth) {
+                            "16:9"
+                        } else {
+                            "16:7"
+                        }
+                    )
                 }
         ) {
-            val (prevButton, nextButton, lazyRow, title) = createRefs()
+            val (prevButton, nextButton, lazyRow, title, logo, buttonLayout) = createRefs()
             val configuration = LocalConfiguration.current
             var index2: Int
 
@@ -134,12 +144,12 @@ fun CarouselList(
                     )
                     .constrainAs(lazyRow) {
                         height = Dimension.ratio(
-                            if(compactWidth) {
+                            if (compactWidth) {
                                 "16:9"
                             } else {
                                 "16:7"
                             }
-                            )
+                        )
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 flingBehavior = rememberSnapperFlingBehavior(
@@ -157,11 +167,7 @@ fun CarouselList(
                     itemContent = { dataIndex: Int ->
                         val index = dataIndex % data.size
                         index2 = index
-                        val itemWidth = if(compactWidth) {
-                            screenWidth / 8 * 6
-                        }else{
-                            screenWidth / 8 * 4
-                        }
+
                         val isMiddleIndex = (index == midIndex)
                         Column(
                             modifier = Modifier
@@ -182,7 +188,7 @@ fun CarouselList(
 
 
                             ) {
-                            CarouselCustomItem(data[index], itemWidth.dp, isMiddleIndex)
+                            CarouselCustomItem(data[index], itemWidth.dp, isMiddleIndex, windowSizeWidth)
                             Box(
                                 modifier = Modifier
                                     .width(itemWidth.dp)
@@ -197,7 +203,14 @@ fun CarouselList(
                                 if (midIndex != -1 && midIndex == index) {
                                     Text(
                                         text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum accumsan viverra metus, non dictum mauris bibendum elementum.",
-                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                start = 16.dp,
+                                                end = 16.dp,
+                                                top = 8.dp,
+                                                bottom = 8.dp
+                                            ),
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         maxLines = 2,
@@ -277,6 +290,32 @@ fun CarouselList(
                     )
                 }
             }
+            val painter2 = rememberAsyncImagePainter(model = R.drawable.pbs_rebrand)
+            val painterState2 = painter2.state
+
+            if (!compactWidth) {
+                Image(
+                    painter = painter2,
+                    modifier = Modifier
+                        .constrainAs(logo) {
+
+                            start.linkTo(carouselLayout.start)
+                        }
+                        .width((screenWidth / 8).dp)
+                        .height((screenWidth / 8).dp)
+                        .padding(8.dp),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                )
+            }
+            if(!compactWidth){
+                Box(modifier = Modifier.constrainAs(buttonLayout){
+                    centerHorizontallyTo(parent)
+                }){
+                    ButtonLayout(itemWidth = itemWidth.dp)
+                }
+            }
+
 
 
         }

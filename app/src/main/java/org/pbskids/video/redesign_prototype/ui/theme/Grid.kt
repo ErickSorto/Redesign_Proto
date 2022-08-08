@@ -38,14 +38,14 @@ fun GridLayout(
         ConstraintLayout(modifier = Modifier
             .constrainAs(gridFrame) {
                 if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM || windowSizeHeight == MainActivity.WindowSizeClass.COMPACT) {
-                    height = Dimension.ratio("16:11")
+                    height = Dimension.ratio("16:18")
                 } else {
                     height = Dimension.ratio("16:7")
                 }
 
             }
             .fillMaxWidth()
-            .height(100.dp)
+            .height(400.dp)
             .background(Magenta)) {
             LazyVerticalGrid(
                 contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 32.dp),
@@ -58,7 +58,7 @@ fun GridLayout(
                             ColumnCustomItem(
                                 data[index],
                                 //ItemWidth.Dp
-                                if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM ||
+                                if (windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM||
                                     windowSizeHeight == MainActivity.WindowSizeClass.COMPACT
                                 ) {
                                     screenWidth / 64 * 30

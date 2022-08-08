@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,21 +19,28 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import org.pbskids.video.redesign_prototype.R
+import org.pbskids.video.redesign_prototype.MainActivity
 import org.pbskids.video.redesign_prototype.model.SingleBox
 
 
 @Composable
-fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boolean) {
+fun CarouselCustomItem(
+    singleBox: SingleBox,
+    itemWidth: Dp,
+    isMiddleIndex: Boolean,
+    windowSizeWidth: MainActivity.WindowSizeClass
+) {
     val configuration = LocalConfiguration.current
-
+    val compactWidth = windowSizeWidth == MainActivity.WindowSizeClass.COMPACT
+    val mediumWidth = windowSizeWidth == MainActivity.WindowSizeClass.MEDIUM
+    val expandedWidth = windowSizeWidth == MainActivity.WindowSizeClass.EXPANDED
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
 
 
     ConstraintLayout() {
-        val (layoutItem, item, logo, itemTitle) = createRefs()
+        val (layoutItem, item, logo, itemTitle, fullTag, newTag) = createRefs()
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
@@ -48,10 +54,10 @@ fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boole
                 }
                 .width(itemWidth),
         ) {
-            val painter2 = rememberAsyncImagePainter(model = R.drawable.pbs_rebrand)
+
             val painter = rememberAsyncImagePainter(model = singleBox.imageID)
             val painterState = painter.state
-            val painterState2 = painter2.state
+
             Column(
                 modifier = Modifier.clip(
                     RoundedCornerShape(
@@ -91,24 +97,18 @@ fun CarouselCustomItem(singleBox: SingleBox, itemWidth: Dp, isMiddleIndex: Boole
 
             }
 
+            if (isMiddleIndex && singleBox.isFullEpisode) {
+                Box(modifier = Modifier
+                    .constrainAs(fullTag) { bottom.linkTo(item.bottom) }
+                    .padding(start = 8.dp)) {
+                    fullEpisodeTag(itemWidth)
+                }
 
-            if (isMiddleIndex) {
-                Image(
-                    painter = painter2,
-                    modifier = Modifier
-                        .constrainAs(logo) {
-                            top.linkTo(item.top)
-                            end.linkTo(item.end)
-                        }
-                        .width(screenWidth / 8)
-                        .height(screenWidth / 8)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                )
             }
 
+
         }
+
 
     }
 }

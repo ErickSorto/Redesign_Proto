@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 resources.displayMetrics.density
         widthWindowSizeClass = when {
             widthDp < 600f -> WindowSizeClass.COMPACT
-            widthDp < 840f -> WindowSizeClass.MEDIUM
+            widthDp < 910f -> WindowSizeClass.MEDIUM
             else -> WindowSizeClass.EXPANDED
         }
 
